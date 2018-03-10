@@ -3,16 +3,22 @@ import os
 import ClienteClass
 
 lista_cliente = []
+nome_arquivo = "clientes_cadastrados.txt"
 
+############# RETORNA O ULTIMO ID CADASTRADO ##############
+def retorna_ultimo_id():
+    return len(lista_cliente)
 
+############# CADASTRANDO OS CLIENTES ##############
 def cadastrar_cliente():
     cliente = ClienteClass.Cliente()
 
+    id = retorna_ultimo_id()
     nome = input("\nDigite o nome do cliente: ")
     idade = input("Digite a idade do cliente: ")
     email = input("Digite o email do cliente: ")
 
-    if(cliente.setNome(nome) and cliente.setIdade(idade) and cliente.setEmail(email)):
+    if(cliente.setId(id) and cliente.setNome(nome) and cliente.setIdade(idade) and cliente.setEmail(email)):
         lista_cliente.append(cliente)
         print("Cliente cadastrado com sucesso")
     else:
@@ -20,38 +26,50 @@ def cadastrar_cliente():
 
     print("\n")
 
+############# LISTANDO OS CLIENTES ##############
 def visualizar_clientes():
     print("\n" * 5)
     for i in lista_cliente:
-        print("Cliente: " + i.getNome())
+        print("ID: " + str(i.getId()), end="\t|\t")
+        print("Cliente: " + i.getNome(), end="\t|\t")
+        print("Idade: " + i.getIdade(), end="\t|\t")
+        print("Email: " + i.getEmail(), end="\n")
 
 def deletar_cliente():
-    for i in lista_cliente:
-        print("Nada")
-
-def rotina_saida():
-    clientes_cadastados = open("clientes_cadastrados.txt", "+a")
+    id_cliente = input("Digite o ID do cliente que deseja deletar: ")
 
     for cliente in lista_cliente:
-        clientes_cadastados.write(cliente.getNome() + "," + cliente.getIdade() + "," + cliente.getEmail() + "\n")
+        if(cliente.getId() == id_cliente):
+            lista_cliente.remove(cliente)
+
+############# SALVANDO AS ALTERACOES ##############
+def rotina_saida():
+    clientes_cadastados = open(nome_arquivo, "w+")
+
+    for cliente in lista_cliente:
+        clientes_cadastados.write(cliente.getId() + "," + cliente.getNome() + "," + cliente.getIdade() + "," + cliente.getEmail() + "\n")
 
     clientes_cadastados.close()
 
+############# PREENCHENDO A LISTA ##############
 def inicializar():
-    if(os.path.isfile("clientes_cadastrados.txt")):
-        clientes_cadastados = open("clientes_cadastrados.txt", "r")
+    if(os.path.isfile(nome_arquivo)):
+        clientes_cadastados = open(nome_arquivo, "r")
 
-        if(clientes_cadastados.readlines()):
-            for linha in clientes_cadastados:
+        for linha in clientes_cadastados.readlines():
+            linha_array = linha.split(",")
 
-                linha_array = linha.split(",")
+            cliente = ClienteClass.Cliente()
 
-                cliente = ClienteClass.Cliente()
 
-                cliente.setNome(linha_array[0])
-                cliente.setIdade(linha_array[1])
-                cliente.setEmail(linha_array[2])
-                lista_cliente.append(cliente)
+            cliente.setId(linha_array[0])
+            cliente.setNome(linha_array[1])
+            cliente.setIdade(linha_array[2])
+            cliente.setEmail(linha_array[3])
+            lista_cliente.append(cliente)
+
+        clientes_cadastados.close()
+
 
 ############# MAIN ##############
 opcao = 1
@@ -72,7 +90,11 @@ while(opcao != 0):
         cadastrar_cliente()
     elif opcao == 2:
         visualizar_clientes()
+    elif opcao == 3:
+        deletar_cliente()
     elif opcao == 0:
         rotina_saida()
+    else:
+        print("Opção invalida")
 
 
