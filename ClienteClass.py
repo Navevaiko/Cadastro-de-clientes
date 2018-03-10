@@ -1,11 +1,23 @@
 class Cliente:
 
+    __cliente_id = 0
     __nome = ""
     __idade = 0
     __email = ""
 
+    def setId(self, cliente_id):
+        self.__cliente_id = cliente_id
+
+        return 1
+
+    def getId(self):
+        return self.__cliente_id
+
     def setNome(self, nome):
         if(nome):
+            nome = nome.replace("\n", "")
+            nome = nome.replace("\r", "")
+
             self.__nome = nome
             return 1
 
@@ -16,6 +28,9 @@ class Cliente:
 
     def setIdade(self, idade):
         if(idade):
+            idade = idade.replace("\n", "")
+            idade = idade.replace("\r", "")
+
             self.__idade = idade
             return 1
 
@@ -26,6 +41,9 @@ class Cliente:
 
     def setEmail(self, email):
         if(email):
+            email = email.replace("\n", "")
+            email = email.replace("\r", "")
+
             self.__email = email
             return 1
 
