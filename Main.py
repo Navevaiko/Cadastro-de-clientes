@@ -35,6 +35,7 @@ def visualizar_clientes():
         print("Idade: " + i.getIdade(), end="\t|\t")
         print("Email: " + i.getEmail(), end="\n")
 
+############# DELETANDO O CLIENTE ##############
 def deletar_cliente():
     id_cliente = input("Digite o ID do cliente que deseja deletar: ")
 
@@ -42,12 +43,32 @@ def deletar_cliente():
         if(cliente.getId() == id_cliente):
             lista_cliente.remove(cliente)
 
+############# EDITANDO O CLIENTE ##############
+def editar_cliente():
+    id_cliente = input("Digite o ID do cliente que deseja editar: ")
+
+    for cliente in lista_cliente:
+        if cliente.getId() == id_cliente:
+            if input("Deseja editar o nome? S/N ") == "S": nome = input("\nDigite o nome do cliente: ")
+            else: nome = cliente.getNome()
+
+            if input("Deseja editar a idade? S/N ") == "S": idade = input("Digite a idade do cliente: ")
+            else: idade = cliente.getIdade()
+
+            if input("Deseja editar o email? S/N ") == "S": email = input("Digite o email do cliente: ")
+            else: email = cliente.getEmail()
+
+            if cliente.setNome(nome) and cliente.setIdade(idade) and cliente.setEmail(email):
+                print("Cliente editado com sucesso")
+            else:
+                print("O cliente nao foi editado")
+
 ############# SALVANDO AS ALTERACOES ##############
 def rotina_saida():
     clientes_cadastados = open(nome_arquivo, "w+")
 
     for cliente in lista_cliente:
-        clientes_cadastados.write(cliente.getId() + "," + cliente.getNome() + "," + cliente.getIdade() + "," + cliente.getEmail() + "\n")
+        clientes_cadastados.write(str(cliente.getId()) + "," + cliente.getNome() + "," + cliente.getIdade() + "," + cliente.getEmail() + "\n")
 
     clientes_cadastados.close()
 
@@ -82,6 +103,7 @@ while(opcao != 0):
     print("[1] - Cadastrar cliente")
     print("[2] - Visualizar clientes cadastrados")
     print("[3] - Deletar cliente")
+    print("[4] - Editar cliente")
     print("[0] - Sair")
 
     opcao = int(sys.stdin.readline())
@@ -92,6 +114,8 @@ while(opcao != 0):
         visualizar_clientes()
     elif opcao == 3:
         deletar_cliente()
+    elif opcao == 4:
+        editar_cliente()
     elif opcao == 0:
         rotina_saida()
     else:
