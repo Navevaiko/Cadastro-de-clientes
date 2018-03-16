@@ -6,7 +6,7 @@ class Cliente:
     __email = ""
 
     def setId(self, cliente_id):
-        self.__cliente_id = cliente_id
+        self.__cliente_id = int(cliente_id)
 
         return 1
 
@@ -27,11 +27,8 @@ class Cliente:
         return self.__nome
 
     def setIdade(self, idade):
-        if(idade):
-            idade = idade.replace("\n", "")
-            idade = idade.replace("\r", "")
-
-            self.__idade = idade
+        if(isinstance(idade, int)):
+            self.__idade = int(idade)
             return 1
 
         return 0

@@ -1,13 +1,22 @@
 import sys
 import os
+import time
+import re
 import ClienteClass
 
 lista_cliente = []
 nome_arquivo = "clientes_cadastrados.txt"
 
+def clear():
+    print("\n"*100)
+
 ############# RETORNA O ULTIMO ID CADASTRADO ##############
 def retorna_ultimo_id():
-    return len(lista_cliente)
+    if len(lista_cliente) == 1:
+        return lista_cliente[len(lista_cliente)-1].getId() + 1
+    else:
+        return 1
+    
 
 ############# CADASTRANDO OS CLIENTES ##############
 def cadastrar_cliente():
@@ -18,44 +27,66 @@ def cadastrar_cliente():
     idade = input("Digite a idade do cliente: ")
     email = input("Digite o email do cliente: ")
 
-    if(cliente.setId(id) and cliente.setNome(nome) and cliente.setIdade(idade) and cliente.setEmail(email)):
-        lista_cliente.append(cliente)
-        print("Cliente cadastrado com sucesso")
-    else:
-        print("O cliente nao foi cadastro")
+    try:
+        if(cliente.setId(id) and cliente.setNome(nome) and cliente.setIdade(idade) and cliente.setEmail(email)):
+            lista_cliente.append(cliente)
+            print("Cliente cadastrado com sucesso")
+        else:
+            print("O cliente nao foi cadastro")
+    except ValueError:
+        print("Cliente não cadastrado, insira os valores corretamente")
+
+    time.sleep(1)
+    clear()
 
     print("\n")
+    salvar_alteracoes()
 
 ############# LISTANDO OS CLIENTES ##############
 def visualizar_clientes():
     print("\n" * 5)
-    for i in lista_cliente:
-        print("ID: " + str(i.getId()), end="\t|\t")
-        print("Cliente: " + i.getNome(), end="\t|\t")
-        print("Idade: " + i.getIdade(), end="\t|\t")
-        print("Email: " + i.getEmail(), end="\n")
+    if len(lista_cliente):
+        for i in lista_cliente:
+            print("ID: " + str(i.getId()), end="\n")
+            print("Cliente: " + i.getNome(), end="\n")
+            print("Idade: " + str(i.getIdade()), end="\n")
+            print("Email: " + i.getEmail(), end="\n")
+            print("---------------------------------")
+
+    print("Não existe nenhum registro")
+    continuar = input("Pressione enter para continuar...")
+
+    while(continuar != ''):
+        time.sleep(1)
+
+    clear()
 
 ############# DELETANDO O CLIENTE ##############
 def deletar_cliente():
-    id_cliente = input("Digite o ID do cliente que deseja deletar: ")
+    id_cliente = int(input("Digite o ID do cliente que deseja deletar: "))
 
     for cliente in lista_cliente:
         if(cliente.getId() == id_cliente):
             lista_cliente.remove(cliente)
 
+    print("Cliente deletado com sucesso")
+    time.sleep(1)
+    clear()
+    salvar_alteracoes()
+
 ############# EDITANDO O CLIENTE ##############
 def editar_cliente():
-    id_cliente = input("Digite o ID do cliente que deseja editar: ")
+    id_cliente = int(input("Digite o ID do cliente que deseja editar: "))
 
     for cliente in lista_cliente:
         if cliente.getId() == id_cliente:
-            if input("Deseja editar o nome? S/N ") == "S": nome = input("\nDigite o nome do cliente: ")
+            if input("Deseja editar o nome? S/N ").upper() == "S": nome = input("\nDigite o nome do cliente: (" + cliente.getNome() + ") ")
             else: nome = cliente.getNome()
 
-            if input("Deseja editar a idade? S/N ") == "S": idade = input("Digite a idade do cliente: ")
+            if input("Deseja editar a idade? S/N ").upper() == "S": idade = input("Digite a idade do cliente: (" + cliente.getIdade() + ") ")
             else: idade = cliente.getIdade()
 
-            if input("Deseja editar o email? S/N ") == "S": email = input("Digite o email do cliente: ")
+            if input("Deseja editar o email? S/N ").upper() == "S": email = input("Digite o email do cliente: (" + cliente.getEmail() + ") ")
             else: email = cliente.getEmail()
 
             if cliente.setNome(nome) and cliente.setIdade(idade) and cliente.setEmail(email):
@@ -63,8 +94,12 @@ def editar_cliente():
             else:
                 print("O cliente nao foi editado")
 
+    time.sleep(1)    
+    clear()
+    salvar_alteracoes()
+
 ############# SALVANDO AS ALTERACOES ##############
-def rotina_saida():
+def salvar_alteracoes():
     clientes_cadastados = open(nome_arquivo, "w+")
 
     for cliente in lista_cliente:
@@ -98,6 +133,11 @@ opcao = 1
 inicializar()
 
 ############# MENU ##############
+#if re.match("([a-z]|[a-z]\d)@[a-z]",input()) != None:
+#    print("Okay")
+#else:
+#    print("Not okay")
+
 while(opcao != 0):
     print("Bem vindo ao cadastro de clientes\nSelecione uma opçao abaixo:\n")
     print("[1] - Cadastrar cliente")
@@ -106,19 +146,24 @@ while(opcao != 0):
     print("[4] - Editar cliente")
     print("[0] - Sair")
 
-    opcao = int(sys.stdin.readline())
+    try:
+        opcao = int(sys.stdin.readline())
 
-    if opcao == 1:
-        cadastrar_cliente()
-    elif opcao == 2:
-        visualizar_clientes()
-    elif opcao == 3:
-        deletar_cliente()
-    elif opcao == 4:
-        editar_cliente()
-    elif opcao == 0:
-        rotina_saida()
-    else:
+        clear()
+
+        if opcao == 1:
+            cadastrar_cliente()
+        elif opcao == 2:
+            visualizar_clientes()
+        elif opcao == 3:
+            deletar_cliente()
+        elif opcao == 4:
+            editar_cliente()
+        elif opcao == 0:
+            salvar_alteracoes()
+        else:
+            print("Opção invalida")
+    except ValueError:
+        clear()
         print("Opção invalida")
-
 
