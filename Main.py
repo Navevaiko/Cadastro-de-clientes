@@ -7,6 +7,34 @@ import ClienteClass
 lista_cliente = []
 nome_arquivo = "clientes_cadastrados.txt"
 
+############# PESQUISANDO O CLIENTE ##############
+def pesquisar_cliente():
+    cpf_cliente = input("Digite o CPF do cliente que deseja pesquisar: ")
+    encontrou = 0
+    
+    print("\n" * 5)
+    if len(lista_cliente):
+        for i in lista_cliente:
+            if i.getCpf() == cpf_cliente:
+                encontrou = 1
+                
+                print("ID: " + str(i.getId()), end="\n")
+                print("Cliente: " + i.getNome(), end="\n")
+                print("Idade: " + str(i.getIdade()), end="\n")
+                print("Email: " + i.getEmail(), end="\n")
+                print("CPF: " + i.getCpf(), end="\n")
+                print("---------------------------------")
+
+    if not encontrou: print("Nenhum registro encontrado")
+    
+    continuar = input("Pressione enter para continuar...")
+
+    while(continuar != ''):
+        time.sleep(1)
+
+    clear()
+
+############# LIMPA O CONSOLE ##############
 def clear():
     print("\n"*100)
 
@@ -26,13 +54,14 @@ def cadastrar_cliente():
     nome = input("\nDigite o nome do cliente: ")
     idade = input("Digite a idade do cliente: ")
     email = input("Digite o email do cliente: ")
-
+    cpf   = input("Digite o CPF do cliente: ")
+   
     try:
-        if(cliente.setId(id) and cliente.setNome(nome) and cliente.setIdade(idade) and cliente.setEmail(email)):
+        if cliente.setId(id) and cliente.setNome(nome) and cliente.setIdade(int(idade)) and cliente.setEmail(email) and cliente.setCpf(cpf):
             lista_cliente.append(cliente)
             print("Cliente cadastrado com sucesso")
         else:
-            print("O cliente nao foi cadastro")
+            print("O cliente nao foi cadastrado")
     except ValueError:
         print("Cliente não cadastrado, insira os valores corretamente")
 
@@ -51,11 +80,12 @@ def visualizar_clientes():
             print("Cliente: " + i.getNome(), end="\n")
             print("Idade: " + str(i.getIdade()), end="\n")
             print("Email: " + i.getEmail(), end="\n")
+            print("CPF: " + i.getCpf(), end="\n")
             print("---------------------------------")
 
-    print("Não existe nenhum registro")
+    else: print("Não existe nenhum registro")
+    
     continuar = input("Pressione enter para continuar...")
-
     while(continuar != ''):
         time.sleep(1)
 
@@ -63,23 +93,30 @@ def visualizar_clientes():
 
 ############# DELETANDO O CLIENTE ##############
 def deletar_cliente():
-    id_cliente = int(input("Digite o ID do cliente que deseja deletar: "))
-
+    cpf_cliente = input("Digite o CPF do cliente que deseja deletar: ")
+    encontrou = 0
+    
     for cliente in lista_cliente:
-        if(cliente.getId() == id_cliente):
+        if(cliente.getCpf() == cpf_cliente):
             lista_cliente.remove(cliente)
 
-    print("Cliente deletado com sucesso")
+    if encontrou: print("Cliente deletado com sucesso")
+    else: print("Nenhum registro encontrado")
+    
     time.sleep(1)
     clear()
     salvar_alteracoes()
 
 ############# EDITANDO O CLIENTE ##############
 def editar_cliente():
-    id_cliente = int(input("Digite o ID do cliente que deseja editar: "))
+    cpf_cliente = input("Digite o CPF do cliente que deseja editar: ")
 
+    encontrou = 0
+    
     for cliente in lista_cliente:
-        if cliente.getId() == id_cliente:
+        if cliente.getCpf() == cpf_cliente:
+            encontrou = 1
+            
             if input("Deseja editar o nome? S/N ").upper() == "S": nome = input("\nDigite o nome do cliente: (" + cliente.getNome() + ") ")
             else: nome = cliente.getNome()
 
@@ -89,11 +126,15 @@ def editar_cliente():
             if input("Deseja editar o email? S/N ").upper() == "S": email = input("Digite o email do cliente: (" + cliente.getEmail() + ") ")
             else: email = cliente.getEmail()
 
-            if cliente.setNome(nome) and cliente.setIdade(idade) and cliente.setEmail(email):
+            if input("Deseja editar o CPF? S/N ").upper() == "S": cpf = input("Digite o CPF do cliente: (" + cliente.getCpf() + ") ")
+            else: cpf = cliente.getCpf()
+
+            if cliente.setNome(nome) and cliente.setIdade(idade) and cliente.setEmail(email) and cliente.setCpf(cpf):
                 print("Cliente editado com sucesso")
             else:
                 print("O cliente nao foi editado")
 
+    if not encontrou: print("Nenhum registro encontrado")
     time.sleep(1)    
     clear()
     salvar_alteracoes()
@@ -103,7 +144,7 @@ def salvar_alteracoes():
     clientes_cadastados = open(nome_arquivo, "w+")
 
     for cliente in lista_cliente:
-        clientes_cadastados.write(str(cliente.getId()) + "," + cliente.getNome() + "," + cliente.getIdade() + "," + cliente.getEmail() + "\n")
+        clientes_cadastados.write(str(cliente.getId()) + "," + cliente.getNome() + "," + str(cliente.getIdade()) + "," + cliente.getEmail() + "," + cliente.getCpf() + "\n")
 
     clientes_cadastados.close()
 
@@ -117,11 +158,11 @@ def inicializar():
 
             cliente = ClienteClass.Cliente()
 
-
             cliente.setId(linha_array[0])
             cliente.setNome(linha_array[1])
-            cliente.setIdade(linha_array[2])
+            cliente.setIdade(int(linha_array[2]))
             cliente.setEmail(linha_array[3])
+            cliente.setCpf(linha_array[4])
             lista_cliente.append(cliente)
 
         clientes_cadastados.close()
@@ -144,6 +185,7 @@ while(opcao != 0):
     print("[2] - Visualizar clientes cadastrados")
     print("[3] - Deletar cliente")
     print("[4] - Editar cliente")
+    print("[5] - Pesquisar cliente")
     print("[0] - Sair")
 
     try:
@@ -159,6 +201,8 @@ while(opcao != 0):
             deletar_cliente()
         elif opcao == 4:
             editar_cliente()
+        elif opcao == 5:
+            pesquisar_cliente()
         elif opcao == 0:
             salvar_alteracoes()
         else:
