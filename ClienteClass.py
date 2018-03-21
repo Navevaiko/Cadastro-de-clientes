@@ -4,6 +4,7 @@ class Cliente:
     __nome = ""
     __idade = 0
     __email = ""
+    __cpf = ""
 
     def setId(self, cliente_id):
         self.__cliente_id = int(cliente_id)
@@ -48,3 +49,16 @@ class Cliente:
 
     def getEmail(self):
         return self.__email
+
+    def setCpf(self, cpf):
+        if(cpf):
+            cpf = cpf.replace("\n", "")
+            cpf = cpf.replace("\r", "")
+
+            self.__cpf = cpf
+            return 1
+
+        return 0
+
+    def getCpf(self):
+        return self.__cpf
